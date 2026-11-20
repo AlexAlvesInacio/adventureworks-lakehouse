@@ -49,6 +49,11 @@ flowchart LR
         S["Prata<br/>padronização"]
         G["Ouro<br/>modelo estrela"]
         P["Painel AI/BI"]
+        F["Ouro financeiro<br/>custo, lucro e margem"]
+    end
+
+    subgraph GRAF["Grafana Cloud"]
+        GD["Dashboard financeiro<br/>via Infinity + API SQL"]
     end
 
     subgraph GH["GitHub"]
@@ -59,6 +64,7 @@ flowchart LR
     A --> IR --> ADF --> STG
     CTL -. lista de tabelas .-> ADF
     STG --> FED --> B --> S --> G --> P
+    G --> F --> GD
     CTL -. mesmas regras .-> B
     R --> CI -- bundle deploy --> DBX
 ```
@@ -195,6 +201,26 @@ Relatório completo: [docs/teste_ponta_a_ponta.md](docs/teste_ponta_a_ponta.md).
 
 ---
 
+## 6. Camada financeira e dashboard no Grafana
+
+O notebook `nb_gold_financeiro` acrescenta à fato de vendas o **custo padrão vigente na data do pedido**, pelo histórico de custos do produto, e calcula custo total, lucro bruto e margem. Gera a `fato_financeiro_vendas` (grão de item), o `agg_financeiro_diario` e a view `vw_financeiro_mensal`, com validação automática contra a fato de vendas.
+
+| Indicador | Valor |
+|---|---|
+| Receita líquida | US$ 109,8 milhões |
+| Custo | US$ 97,3 milhões |
+| Lucro bruto | US$ 12,6 milhões |
+| Margem bruta | 11,4% |
+| Itens com custo histórico | 100% |
+
+O dashboard roda no **Grafana Cloud** e consulta a camada ouro pela **API SQL Statement Execution** do Databricks, com o plugin **Infinity**, um token restrito e uma lista de hosts permitidos. A definição do dashboard fica versionada em [`grafana/`](grafana/).
+
+![Dashboard financeiro no Grafana](docs/evidencias/24_grafana_dashboard_financeiro.png)
+
+**Principal leitura:** a revenda gera 73% da receita (US$ 80,5 milhões), mas tem margem de apenas 0,6%, com meses negativos; o canal online, com US$ 29,4 milhões, tem margem de 41,2% e gera quase todo o lucro.
+
+---
+
 ## Estrutura do repositório
 
 ```text
@@ -206,6 +232,7 @@ adventureworks-lakehouse/
 │   └── src/                # notebooks bronze, prata e ouro + utils
 ├── sql/azure/              # scripts do Azure SQL
 ├── tests/                  # testes das transformações (pytest)
+├── grafana/                # dashboard financeiro (JSON)
 ├── docs/                   # guia, relatórios e evidências
 └── .github/workflows/      # CI e CD
 ```
@@ -231,7 +258,7 @@ adventureworks-lakehouse/
 
 - Agendar o job após o Data Factory ou acioná-lo pela API ao fim da ingestão.
 - Detecção de mudança de esquema na origem, com alerta e roteiro de correção.
-- Painel de observabilidade no Grafana.
+- Painel de observabilidade do pipeline no Grafana (execuções, tempos e falhas).
 - Ingestão de APIs públicas (Banco Central, Portal da Transparência) num Azure Data Lake Storage Gen2.
 - Power BI sobre o modelo estrela.
 
