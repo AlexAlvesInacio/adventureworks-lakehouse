@@ -8,8 +8,8 @@
 
 dbutils.widgets.text("catalogo", "workspace")
 dbutils.widgets.text("catalogo_origem", "azure_adventureworks")
-dbutils.widgets.text("schema_bronze", "adventureworks_bronze")
-dbutils.widgets.text("schema_silver", "adventureworks_silver")
+dbutils.widgets.text("schema_bronze", "dev_adventureworks_bronze")
+dbutils.widgets.text("schema_silver", "dev_adventureworks_silver")
 
 catalogo = dbutils.widgets.get("catalogo")
 catalogo_origem = dbutils.widgets.get("catalogo_origem")
@@ -73,11 +73,7 @@ def remover_duplicados(df, chaves, coluna_marco):
 
     ordem = F.col(coluna_marco).desc() if coluna_marco else F.lit(1)
     janela = Window.partitionBy(*chaves).orderBy(ordem)
-    return (
-        df.withColumn("_ordem", F.row_number().over(janela))
-        .filter(F.col("_ordem") == 1)
-        .drop("_ordem")
-    )
+    return df.withColumn("_ordem", F.row_number().over(janela)).filter(F.col("_ordem") == 1).drop("_ordem")
 
 
 # COMMAND ----------
@@ -124,11 +120,7 @@ for item in controle:
             continue
 
         # Marco próprio da prata
-        marco_atual = (
-            spark.table(destino)
-            .agg(F.max(F.col(marco_silver)).alias("marco"))
-            .collect()[0]["marco"]
-        )
+        marco_atual = spark.table(destino).agg(F.max(F.col(marco_silver)).alias("marco")).collect()[0]["marco"]
 
         df_bronze = spark.table(origem)
         if marco_atual is not None:
@@ -164,7 +156,7 @@ for item in controle:
 df_log = spark.createDataFrame(
     registros_log,
     schema="data_execucao TIMESTAMP, tabela STRING, tipo_execucao STRING, "
-           "linhas_processadas BIGINT, marco_anterior TIMESTAMP, mensagem_erro STRING",
+    "linhas_processadas BIGINT, marco_anterior TIMESTAMP, mensagem_erro STRING",
 )
 df_log.write.mode("append").saveAsTable(tabela_log)
 

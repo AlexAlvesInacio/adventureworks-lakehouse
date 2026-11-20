@@ -1,8 +1,11 @@
 resources:
   jobs:
     job_lab_adventureworks:
-      name: job_lab_adventureworks
+      name: job_adventureworks_lakehouse
       description: Bronze incremental, prata padronizada e ouro de vendas (AdventureWorks).
+      tags:
+        projeto: adventureworks-lakehouse
+        gerenciado_por: bundle
 
       # Parâmetros do job: repassados automaticamente aos widgets dos notebooks.
       parameters:
