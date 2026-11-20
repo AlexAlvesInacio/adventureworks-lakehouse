@@ -1,0 +1,897 @@
+{
+  "apiVersion": "dashboard.grafana.app/v2",
+  "kind": "Dashboard",
+  "metadata": {
+    "name": ""
+  },
+  "spec": {
+    "annotations": [
+      {
+        "kind": "AnnotationQuery",
+        "spec": {
+          "builtIn": true,
+          "enable": true,
+          "hide": true,
+          "iconColor": "rgba(0, 211, 255, 1)",
+          "name": "Annotations & Alerts",
+          "query": {
+            "datasource": {
+              "name": "-- Grafana --"
+            },
+            "group": "grafana",
+            "kind": "DataQuery",
+            "spec": {},
+            "version": "v0"
+          }
+        }
+      }
+    ],
+    "cursorSync": "Crosshair",
+    "editable": true,
+    "elements": {
+      "panel-1": {
+        "kind": "Panel",
+        "spec": {
+          "id": 1,
+          "title": "Indicadores financeiros",
+          "description": "Totais da fato_financeiro_vendas (camada ouro).",
+          "links": [],
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "hidden": false,
+                    "refId": "A",
+                    "query": {
+                      "datasource": {
+                        "name": "bg4wsslet2ygwd"
+                      },
+                      "group": "yesoreyeram-infinity-datasource",
+                      "kind": "DataQuery",
+                      "version": "v0",
+                      "spec": {
+                        "columns": [
+                          {
+                            "selector": "receita",
+                            "text": "Receita líquida",
+                            "type": "number"
+                          },
+                          {
+                            "selector": "custo",
+                            "text": "Custo",
+                            "type": "number"
+                          },
+                          {
+                            "selector": "lucro",
+                            "text": "Lucro bruto",
+                            "type": "number"
+                          },
+                          {
+                            "selector": "margem",
+                            "text": "Margem bruta",
+                            "type": "number"
+                          },
+                          {
+                            "selector": "pedidos",
+                            "text": "Pedidos",
+                            "type": "number"
+                          },
+                          {
+                            "selector": "ticket",
+                            "text": "Ticket médio",
+                            "type": "number"
+                          }
+                        ],
+                        "filters": [],
+                        "format": "table",
+                        "global_query_id": "",
+                        "parser": "backend",
+                        "root_selector": "$map(result.data_array, function($r) { {\"receita\": $number($r[0]), \"custo\": $number($r[1]), \"lucro\": $number($r[2]), \"margem\": $number($r[3]), \"pedidos\": $number($r[4]), \"ticket\": $number($r[5])} })",
+                        "source": "url",
+                        "type": "json",
+                        "url": "https://dbc-bf6e5a3f-5188.cloud.databricks.com/api/2.0/sql/statements",
+                        "url_options": {
+                          "body_content_type": "application/json",
+                          "body_type": "raw",
+                          "data": "{\"warehouse_id\": \"a3d231087d62fd96\", \"wait_timeout\": \"30s\", \"disposition\": \"INLINE\", \"format\": \"JSON_ARRAY\", \"statement\": \"SELECT ROUND(SUM(valor_liquido), 2), ROUND(SUM(custo_total), 2), ROUND(SUM(lucro_bruto), 2), ROUND(100 * SUM(lucro_bruto) / SUM(valor_liquido), 2), COUNT(DISTINCT pedido_id), ROUND(SUM(valor_liquido) / COUNT(DISTINCT pedido_id), 2) FROM workspace.dev_adventureworks_gold.fato_financeiro_vendas\"}",
+                          "method": "POST"
+                        }
+                      }
+                    }
+                  }
+                }
+              ],
+              "queryOptions": {},
+              "transformations": []
+            }
+          },
+          "vizConfig": {
+            "kind": "VizConfig",
+            "group": "stat",
+            "version": "13.4.0-44259162873",
+            "spec": {
+              "fieldConfig": {
+                "defaults": {
+                  "unit": "currencyUSD",
+                  "decimals": 0,
+                  "color": {
+                    "mode": "fixed",
+                    "fixedColor": "blue"
+                  }
+                },
+                "overrides": [
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "Margem bruta"
+                    },
+                    "properties": [
+                      {
+                        "id": "unit",
+                        "value": "percent"
+                      },
+                      {
+                        "id": "decimals",
+                        "value": 1
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "Pedidos"
+                    },
+                    "properties": [
+                      {
+                        "id": "unit",
+                        "value": "short"
+                      },
+                      {
+                        "id": "decimals",
+                        "value": 0
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "Lucro bruto"
+                    },
+                    "properties": [
+                      {
+                        "id": "color",
+                        "value": {
+                          "mode": "fixed",
+                          "fixedColor": "green"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "Custo"
+                    },
+                    "properties": [
+                      {
+                        "id": "color",
+                        "value": {
+                          "mode": "fixed",
+                          "fixedColor": "orange"
+                        }
+                      }
+                    ]
+                  }
+                ]
+              },
+              "options": {
+                "reduceOptions": {
+                  "calcs": [
+                    "lastNotNull"
+                  ],
+                  "fields": "",
+                  "values": false
+                },
+                "colorMode": "background",
+                "graphMode": "none",
+                "justifyMode": "center",
+                "textMode": "value_and_name",
+                "orientation": "auto",
+                "wideLayout": true,
+                "showPercentChange": false
+              }
+            }
+          }
+        }
+      },
+      "panel-2": {
+        "kind": "Panel",
+        "spec": {
+          "id": 2,
+          "title": "Receita e lucro bruto por mês",
+          "description": "vw_financeiro_mensal, somando os canais.",
+          "links": [],
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "hidden": false,
+                    "refId": "A",
+                    "query": {
+                      "datasource": {
+                        "name": "bg4wsslet2ygwd"
+                      },
+                      "group": "yesoreyeram-infinity-datasource",
+                      "kind": "DataQuery",
+                      "version": "v0",
+                      "spec": {
+                        "columns": [
+                          {
+                            "selector": "mes",
+                            "text": "Mês",
+                            "type": "timestamp",
+                            "timestampFormat": "2006-01-02"
+                          },
+                          {
+                            "selector": "receita",
+                            "text": "Receita líquida",
+                            "type": "number"
+                          },
+                          {
+                            "selector": "lucro",
+                            "text": "Lucro bruto",
+                            "type": "number"
+                          }
+                        ],
+                        "filters": [],
+                        "format": "table",
+                        "global_query_id": "",
+                        "parser": "backend",
+                        "root_selector": "$map(result.data_array, function($r) { {\"mes\": $r[0], \"receita\": $number($r[1]), \"lucro\": $number($r[2])} })",
+                        "source": "url",
+                        "type": "json",
+                        "url": "https://dbc-bf6e5a3f-5188.cloud.databricks.com/api/2.0/sql/statements",
+                        "url_options": {
+                          "body_content_type": "application/json",
+                          "body_type": "raw",
+                          "data": "{\"warehouse_id\": \"a3d231087d62fd96\", \"wait_timeout\": \"30s\", \"disposition\": \"INLINE\", \"format\": \"JSON_ARRAY\", \"statement\": \"SELECT date_format(mes, 'yyyy-MM-dd'), ROUND(SUM(receita_liquida), 2), ROUND(SUM(lucro_bruto), 2) FROM workspace.dev_adventureworks_gold.vw_financeiro_mensal GROUP BY 1 ORDER BY 1\"}",
+                          "method": "POST"
+                        }
+                      }
+                    }
+                  }
+                }
+              ],
+              "queryOptions": {},
+              "transformations": []
+            }
+          },
+          "vizConfig": {
+            "kind": "VizConfig",
+            "group": "timeseries",
+            "version": "13.4.0-44259162873",
+            "spec": {
+              "fieldConfig": {
+                "defaults": {
+                  "color": {
+                    "mode": "palette-classic"
+                  },
+                  "unit": "currencyUSD",
+                  "custom": {
+                    "drawStyle": "line",
+                    "lineWidth": 2,
+                    "fillOpacity": 10,
+                    "showPoints": "auto",
+                    "lineInterpolation": "smooth",
+                    "spanNulls": false
+                  }
+                },
+                "overrides": []
+              },
+              "options": {
+                "legend": {
+                  "calcs": [],
+                  "displayMode": "list",
+                  "placement": "bottom",
+                  "showLegend": true
+                },
+                "tooltip": {
+                  "mode": "multi",
+                  "sort": "none",
+                  "hideZeros": false
+                }
+              }
+            }
+          }
+        }
+      },
+      "panel-3": {
+        "kind": "Panel",
+        "spec": {
+          "id": 3,
+          "title": "Margem bruta por canal (%)",
+          "description": "Lucro bruto dividido pela receita líquida, por mês e canal.",
+          "links": [],
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "hidden": false,
+                    "refId": "A",
+                    "query": {
+                      "datasource": {
+                        "name": "bg4wsslet2ygwd"
+                      },
+                      "group": "yesoreyeram-infinity-datasource",
+                      "kind": "DataQuery",
+                      "version": "v0",
+                      "spec": {
+                        "columns": [
+                          {
+                            "selector": "mes",
+                            "text": "Mês",
+                            "type": "timestamp",
+                            "timestampFormat": "2006-01-02"
+                          },
+                          {
+                            "selector": "online",
+                            "text": "Online",
+                            "type": "number"
+                          },
+                          {
+                            "selector": "revenda",
+                            "text": "Revenda",
+                            "type": "number"
+                          }
+                        ],
+                        "filters": [],
+                        "format": "table",
+                        "global_query_id": "",
+                        "parser": "backend",
+                        "root_selector": "$map(result.data_array, function($r) { {\"mes\": $r[0], \"online\": $number($r[1]), \"revenda\": $number($r[2])} })",
+                        "source": "url",
+                        "type": "json",
+                        "url": "https://dbc-bf6e5a3f-5188.cloud.databricks.com/api/2.0/sql/statements",
+                        "url_options": {
+                          "body_content_type": "application/json",
+                          "body_type": "raw",
+                          "data": "{\"warehouse_id\": \"a3d231087d62fd96\", \"wait_timeout\": \"30s\", \"disposition\": \"INLINE\", \"format\": \"JSON_ARRAY\", \"statement\": \"SELECT date_format(mes, 'yyyy-MM-dd'), ROUND(100 * SUM(CASE WHEN canal = 'Online' THEN lucro_bruto END) / SUM(CASE WHEN canal = 'Online' THEN receita_liquida END), 2), ROUND(100 * SUM(CASE WHEN canal = 'Revenda' THEN lucro_bruto END) / SUM(CASE WHEN canal = 'Revenda' THEN receita_liquida END), 2) FROM workspace.dev_adventureworks_gold.vw_financeiro_mensal GROUP BY 1 ORDER BY 1\"}",
+                          "method": "POST"
+                        }
+                      }
+                    }
+                  }
+                }
+              ],
+              "queryOptions": {},
+              "transformations": []
+            }
+          },
+          "vizConfig": {
+            "kind": "VizConfig",
+            "group": "timeseries",
+            "version": "13.4.0-44259162873",
+            "spec": {
+              "fieldConfig": {
+                "defaults": {
+                  "color": {
+                    "mode": "palette-classic"
+                  },
+                  "unit": "percent",
+                  "custom": {
+                    "drawStyle": "line",
+                    "lineWidth": 2,
+                    "fillOpacity": 10,
+                    "showPoints": "auto",
+                    "lineInterpolation": "smooth",
+                    "spanNulls": false
+                  },
+                  "decimals": 1
+                },
+                "overrides": []
+              },
+              "options": {
+                "legend": {
+                  "calcs": [],
+                  "displayMode": "list",
+                  "placement": "bottom",
+                  "showLegend": true
+                },
+                "tooltip": {
+                  "mode": "multi",
+                  "sort": "none",
+                  "hideZeros": false
+                }
+              }
+            }
+          }
+        }
+      },
+      "panel-4": {
+        "kind": "Panel",
+        "spec": {
+          "id": 4,
+          "title": "Receita e lucro por categoria",
+          "description": "Receita líquida e lucro bruto por categoria.",
+          "links": [],
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "hidden": false,
+                    "refId": "A",
+                    "query": {
+                      "datasource": {
+                        "name": "bg4wsslet2ygwd"
+                      },
+                      "group": "yesoreyeram-infinity-datasource",
+                      "kind": "DataQuery",
+                      "version": "v0",
+                      "spec": {
+                        "columns": [
+                          {
+                            "selector": "categoria",
+                            "text": "Categoria",
+                            "type": "string"
+                          },
+                          {
+                            "selector": "receita",
+                            "text": "Receita líquida",
+                            "type": "number"
+                          },
+                          {
+                            "selector": "lucro",
+                            "text": "Lucro bruto",
+                            "type": "number"
+                          }
+                        ],
+                        "filters": [],
+                        "format": "table",
+                        "global_query_id": "",
+                        "parser": "backend",
+                        "root_selector": "$map(result.data_array, function($r) { {\"categoria\": $r[0], \"receita\": $number($r[1]), \"lucro\": $number($r[2])} })",
+                        "source": "url",
+                        "type": "json",
+                        "url": "https://dbc-bf6e5a3f-5188.cloud.databricks.com/api/2.0/sql/statements",
+                        "url_options": {
+                          "body_content_type": "application/json",
+                          "body_type": "raw",
+                          "data": "{\"warehouse_id\": \"a3d231087d62fd96\", \"wait_timeout\": \"30s\", \"disposition\": \"INLINE\", \"format\": \"JSON_ARRAY\", \"statement\": \"SELECT categoria, ROUND(SUM(receita_liquida), 2), ROUND(SUM(lucro_bruto), 2) FROM workspace.dev_adventureworks_gold.agg_financeiro_diario GROUP BY 1 ORDER BY 2 DESC\"}",
+                          "method": "POST"
+                        }
+                      }
+                    }
+                  }
+                }
+              ],
+              "queryOptions": {},
+              "transformations": []
+            }
+          },
+          "vizConfig": {
+            "kind": "VizConfig",
+            "group": "barchart",
+            "version": "13.4.0-44259162873",
+            "spec": {
+              "fieldConfig": {
+                "defaults": {
+                  "unit": "currencyUSD",
+                  "decimals": 0,
+                  "color": {
+                    "mode": "palette-classic"
+                  },
+                  "custom": {
+                    "fillOpacity": 85,
+                    "lineWidth": 0
+                  }
+                },
+                "overrides": []
+              },
+              "options": {
+                "orientation": "horizontal",
+                "xField": "Categoria",
+                "showValue": "never",
+                "stacking": "none",
+                "groupWidth": 0.7,
+                "barWidth": 0.9,
+                "xTickLabelRotation": 0,
+                "legend": {
+                  "calcs": [],
+                  "displayMode": "list",
+                  "placement": "bottom",
+                  "showLegend": true
+                },
+                "tooltip": {
+                  "mode": "multi",
+                  "sort": "none",
+                  "hideZeros": false
+                }
+              }
+            }
+          }
+        }
+      },
+      "panel-5": {
+        "kind": "Panel",
+        "spec": {
+          "id": 5,
+          "title": "Receita e lucro por país",
+          "description": "Receita líquida e lucro bruto por país.",
+          "links": [],
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "hidden": false,
+                    "refId": "A",
+                    "query": {
+                      "datasource": {
+                        "name": "bg4wsslet2ygwd"
+                      },
+                      "group": "yesoreyeram-infinity-datasource",
+                      "kind": "DataQuery",
+                      "version": "v0",
+                      "spec": {
+                        "columns": [
+                          {
+                            "selector": "nome_pais",
+                            "text": "País",
+                            "type": "string"
+                          },
+                          {
+                            "selector": "receita",
+                            "text": "Receita líquida",
+                            "type": "number"
+                          },
+                          {
+                            "selector": "lucro",
+                            "text": "Lucro bruto",
+                            "type": "number"
+                          }
+                        ],
+                        "filters": [],
+                        "format": "table",
+                        "global_query_id": "",
+                        "parser": "backend",
+                        "root_selector": "$map(result.data_array, function($r) { {\"nome_pais\": $r[0], \"receita\": $number($r[1]), \"lucro\": $number($r[2])} })",
+                        "source": "url",
+                        "type": "json",
+                        "url": "https://dbc-bf6e5a3f-5188.cloud.databricks.com/api/2.0/sql/statements",
+                        "url_options": {
+                          "body_content_type": "application/json",
+                          "body_type": "raw",
+                          "data": "{\"warehouse_id\": \"a3d231087d62fd96\", \"wait_timeout\": \"30s\", \"disposition\": \"INLINE\", \"format\": \"JSON_ARRAY\", \"statement\": \"SELECT nome_pais, ROUND(SUM(receita_liquida), 2), ROUND(SUM(lucro_bruto), 2) FROM workspace.dev_adventureworks_gold.agg_financeiro_diario GROUP BY 1 ORDER BY 2 DESC\"}",
+                          "method": "POST"
+                        }
+                      }
+                    }
+                  }
+                }
+              ],
+              "queryOptions": {},
+              "transformations": []
+            }
+          },
+          "vizConfig": {
+            "kind": "VizConfig",
+            "group": "barchart",
+            "version": "13.4.0-44259162873",
+            "spec": {
+              "fieldConfig": {
+                "defaults": {
+                  "unit": "currencyUSD",
+                  "decimals": 0,
+                  "color": {
+                    "mode": "palette-classic"
+                  },
+                  "custom": {
+                    "fillOpacity": 85,
+                    "lineWidth": 0
+                  }
+                },
+                "overrides": []
+              },
+              "options": {
+                "orientation": "horizontal",
+                "xField": "País",
+                "showValue": "never",
+                "stacking": "none",
+                "groupWidth": 0.7,
+                "barWidth": 0.9,
+                "xTickLabelRotation": 0,
+                "legend": {
+                  "calcs": [],
+                  "displayMode": "list",
+                  "placement": "bottom",
+                  "showLegend": true
+                },
+                "tooltip": {
+                  "mode": "multi",
+                  "sort": "none",
+                  "hideZeros": false
+                }
+              }
+            }
+          }
+        }
+      },
+      "panel-6": {
+        "kind": "Panel",
+        "spec": {
+          "id": 6,
+          "title": "Resumo por canal",
+          "description": "Indicadores consolidados por canal de venda.",
+          "links": [],
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "hidden": false,
+                    "refId": "A",
+                    "query": {
+                      "datasource": {
+                        "name": "bg4wsslet2ygwd"
+                      },
+                      "group": "yesoreyeram-infinity-datasource",
+                      "kind": "DataQuery",
+                      "version": "v0",
+                      "spec": {
+                        "columns": [
+                          {
+                            "selector": "canal",
+                            "text": "Canal",
+                            "type": "string"
+                          },
+                          {
+                            "selector": "pedidos",
+                            "text": "Pedidos",
+                            "type": "number"
+                          },
+                          {
+                            "selector": "receita",
+                            "text": "Receita líquida",
+                            "type": "number"
+                          },
+                          {
+                            "selector": "custo",
+                            "text": "Custo",
+                            "type": "number"
+                          },
+                          {
+                            "selector": "lucro",
+                            "text": "Lucro bruto",
+                            "type": "number"
+                          },
+                          {
+                            "selector": "margem",
+                            "text": "Margem bruta",
+                            "type": "number"
+                          },
+                          {
+                            "selector": "ticket",
+                            "text": "Ticket médio",
+                            "type": "number"
+                          }
+                        ],
+                        "filters": [],
+                        "format": "table",
+                        "global_query_id": "",
+                        "parser": "backend",
+                        "root_selector": "$map(result.data_array, function($r) { {\"canal\": $r[0], \"pedidos\": $number($r[1]), \"receita\": $number($r[2]), \"custo\": $number($r[3]), \"lucro\": $number($r[4]), \"margem\": $number($r[5]), \"ticket\": $number($r[6])} })",
+                        "source": "url",
+                        "type": "json",
+                        "url": "https://dbc-bf6e5a3f-5188.cloud.databricks.com/api/2.0/sql/statements",
+                        "url_options": {
+                          "body_content_type": "application/json",
+                          "body_type": "raw",
+                          "data": "{\"warehouse_id\": \"a3d231087d62fd96\", \"wait_timeout\": \"30s\", \"disposition\": \"INLINE\", \"format\": \"JSON_ARRAY\", \"statement\": \"SELECT canal, COUNT(DISTINCT pedido_id), ROUND(SUM(valor_liquido), 2), ROUND(SUM(custo_total), 2), ROUND(SUM(lucro_bruto), 2), ROUND(100 * SUM(lucro_bruto) / SUM(valor_liquido), 2), ROUND(SUM(valor_liquido) / COUNT(DISTINCT pedido_id), 2) FROM workspace.dev_adventureworks_gold.fato_financeiro_vendas GROUP BY 1 ORDER BY 3 DESC\"}",
+                          "method": "POST"
+                        }
+                      }
+                    }
+                  }
+                }
+              ],
+              "queryOptions": {},
+              "transformations": []
+            }
+          },
+          "vizConfig": {
+            "kind": "VizConfig",
+            "group": "table",
+            "version": "13.4.0-44259162873",
+            "spec": {
+              "fieldConfig": {
+                "defaults": {
+                  "unit": "currencyUSD",
+                  "decimals": 2,
+                  "custom": {
+                    "align": "auto"
+                  }
+                },
+                "overrides": [
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "Margem bruta"
+                    },
+                    "properties": [
+                      {
+                        "id": "unit",
+                        "value": "percent"
+                      },
+                      {
+                        "id": "decimals",
+                        "value": 1
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "Pedidos"
+                    },
+                    "properties": [
+                      {
+                        "id": "unit",
+                        "value": "short"
+                      },
+                      {
+                        "id": "decimals",
+                        "value": 0
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "Canal"
+                    },
+                    "properties": [
+                      {
+                        "id": "unit",
+                        "value": "string"
+                      }
+                    ]
+                  }
+                ]
+              },
+              "options": {
+                "showHeader": true,
+                "cellHeight": "sm"
+              }
+            }
+          }
+        }
+      }
+    },
+    "layout": {
+      "kind": "GridLayout",
+      "spec": {
+        "items": [
+          {
+            "kind": "GridLayoutItem",
+            "spec": {
+              "x": 0,
+              "y": 0,
+              "width": 24,
+              "height": 5,
+              "element": {
+                "kind": "ElementReference",
+                "name": "panel-1"
+              }
+            }
+          },
+          {
+            "kind": "GridLayoutItem",
+            "spec": {
+              "x": 0,
+              "y": 5,
+              "width": 12,
+              "height": 9,
+              "element": {
+                "kind": "ElementReference",
+                "name": "panel-2"
+              }
+            }
+          },
+          {
+            "kind": "GridLayoutItem",
+            "spec": {
+              "x": 12,
+              "y": 5,
+              "width": 12,
+              "height": 9,
+              "element": {
+                "kind": "ElementReference",
+                "name": "panel-3"
+              }
+            }
+          },
+          {
+            "kind": "GridLayoutItem",
+            "spec": {
+              "x": 0,
+              "y": 14,
+              "width": 12,
+              "height": 9,
+              "element": {
+                "kind": "ElementReference",
+                "name": "panel-4"
+              }
+            }
+          },
+          {
+            "kind": "GridLayoutItem",
+            "spec": {
+              "x": 12,
+              "y": 14,
+              "width": 12,
+              "height": 9,
+              "element": {
+                "kind": "ElementReference",
+                "name": "panel-5"
+              }
+            }
+          },
+          {
+            "kind": "GridLayoutItem",
+            "spec": {
+              "x": 0,
+              "y": 23,
+              "width": 24,
+              "height": 6,
+              "element": {
+                "kind": "ElementReference",
+                "name": "panel-6"
+              }
+            }
+          }
+        ]
+      }
+    },
+    "links": [],
+    "liveNow": false,
+    "preload": false,
+    "tags": [
+      "adventureworks",
+      "databricks",
+      "financeiro"
+    ],
+    "timeSettings": {
+      "autoRefresh": "",
+      "autoRefreshIntervals": [
+        "5m",
+        "15m",
+        "30m",
+        "1h",
+        "1d"
+      ],
+      "fiscalYearStartMonth": 0,
+      "from": "now-5y",
+      "to": "now",
+      "hideTimepicker": false,
+      "timezone": "utc"
+    },
+    "title": "Financeiro AdventureWorks",
+    "variables": []
+  }
+}
