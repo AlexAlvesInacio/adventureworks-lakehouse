@@ -1,0 +1,45 @@
+# Declarative Automation Bundle do laboratório AdventureWorks.
+# Docs: https://learn.microsoft.com/azure/databricks/dev-tools/bundles/
+
+bundle:
+  name: adventureworks_lakehouse
+
+include:
+  - resources/*.yml
+
+variables:
+  catalogo:
+    description: Catálogo do Unity Catalog onde ficam as camadas.
+    default: workspace
+  catalogo_origem:
+    description: Catálogo federado que aponta para o Azure SQL.
+    default: azure_adventureworks
+  schema_bronze:
+    description: Schema da camada bronze.
+  schema_silver:
+    description: Schema da camada prata.
+  schema_gold:
+    description: Schema da camada ouro.
+
+workspace:
+  host: https://dbc-bf6e5a3f-5188.cloud.databricks.com
+
+targets:
+  # Desenvolvimento: branch dev. Schemas com prefixo dev_ e job com prefixo
+  # "[dev usuário]". Agendamentos ficam pausados neste modo.
+  dev:
+    mode: development
+    default: true
+    variables:
+      schema_bronze: dev_adventureworks_bronze
+      schema_silver: dev_adventureworks_silver
+      schema_gold: dev_adventureworks_gold
+
+  # Estável: branch main. Usa os schemas atuais do projeto.
+  prod:
+    workspace:
+      root_path: /Workspace/Users/${workspace.current_user.userName}/.bundle/${bundle.name}/prod
+    variables:
+      schema_bronze: adventureworks_bronze
+      schema_silver: adventureworks_silver
+      schema_gold: adventureworks_gold

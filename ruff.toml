@@ -1,0 +1,11 @@
+line-length = 120
+target-version = "py311"
+# Notebooks Databricks: dbutils, spark e display são globais do ambiente.
+builtins = ["spark", "dbutils", "display"]
+
+[lint]
+select = ["E", "F", "W", "I"]
+
+[lint.per-file-ignores]
+# Em notebooks, imports aparecem depois da célula de parâmetros.
+"databricks/src/nb_*.py" = ["E402", "I001"]

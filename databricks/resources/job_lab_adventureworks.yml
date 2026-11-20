@@ -1,0 +1,45 @@
+resources:
+  jobs:
+    job_lab_adventureworks:
+      name: job_lab_adventureworks
+      description: Bronze incremental, prata padronizada e ouro de vendas (AdventureWorks).
+
+      # Parâmetros do job: repassados automaticamente aos widgets dos notebooks.
+      parameters:
+        - name: catalogo
+          default: ${var.catalogo}
+        - name: catalogo_origem
+          default: ${var.catalogo_origem}
+        - name: schema_bronze
+          default: ${var.schema_bronze}
+        - name: schema_silver
+          default: ${var.schema_silver}
+        - name: schema_gold
+          default: ${var.schema_gold}
+
+      # Sem bloco de compute: as tarefas de notebook rodam em serverless.
+      tasks:
+        - task_key: bronze_incremental
+          notebook_task:
+            notebook_path: ../src/nb_bronze_incremental.py
+          max_retries: 1
+          min_retry_interval_millis: 60000
+          retry_on_timeout: true
+
+        - task_key: silver_padronizacao
+          depends_on:
+            - task_key: bronze_incremental
+          notebook_task:
+            notebook_path: ../src/nb_silver_padronizacao.py
+          max_retries: 1
+          min_retry_interval_millis: 60000
+          retry_on_timeout: true
+
+        - task_key: gold_vendas
+          depends_on:
+            - task_key: silver_padronizacao
+          notebook_task:
+            notebook_path: ../src/nb_gold_vendas.py
+          max_retries: 1
+          min_retry_interval_millis: 60000
+          retry_on_timeout: true

@@ -1,0 +1,22 @@
+# Databricks CLI / bundles
+.databricks/
+databricks/.databricks/
+
+# Python
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+.venv/
+venv/
+
+# Credenciais e configurações locais: nunca versionar
+.env
+*.env
+.databrickscfg
+
+# Editores e sistema
+.vscode/settings.json
+.idea/
+.DS_Store
+Thumbs.db

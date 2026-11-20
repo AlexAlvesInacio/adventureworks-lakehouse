@@ -1,0 +1,56 @@
+name: CI
+
+# Valida toda alteração enviada para dev e todo Pull Request para main.
+# Em push na branch dev, também publica o bundle no alvo dev (sem executar o job).
+on:
+  push:
+    branches: [dev]
+  pull_request:
+    branches: [main]
+
+jobs:
+  qualidade:
+    name: Qualidade e testes
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Instalar ferramentas
+        run: pip install pytest ruff
+
+      - name: Verificar código Python (ruff)
+        run: ruff check .
+
+      - name: Testes das transformações (pytest)
+        run: pytest -q tests
+
+  bundle:
+    name: Validar e publicar bundle (dev)
+    needs: qualidade
+    runs-on: ubuntu-latest
+    env:
+      DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
+      DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
+    defaults:
+      run:
+        working-directory: databricks
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: databricks/setup-cli@main
+
+      - name: Aviso quando os segredos ainda não existem
+        if: env.DATABRICKS_TOKEN == ''
+        run: echo "::warning::Segredos DATABRICKS_HOST e DATABRICKS_TOKEN não configurados. Validação do bundle ignorada."
+
+      - name: Validar bundle (alvo dev)
+        if: env.DATABRICKS_TOKEN != ''
+        run: databricks bundle validate -t dev
+
+      - name: Publicar bundle no alvo dev
+        if: env.DATABRICKS_TOKEN != '' && github.event_name == 'push' && github.ref == 'refs/heads/dev'
+        run: databricks bundle deploy -t dev

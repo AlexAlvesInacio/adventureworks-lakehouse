@@ -1,0 +1,34 @@
+name: CD
+
+# Publica a versão estável depois do merge na main.
+# Publicar não executa a carga: rodar o job continua sendo uma ação separada e controlada.
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-prod
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Publicar bundle no alvo prod
+    runs-on: ubuntu-latest
+    environment: prod
+    env:
+      DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
+      DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
+    defaults:
+      run:
+        working-directory: databricks
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: databricks/setup-cli@main
+
+      - name: Validar bundle (alvo prod)
+        run: databricks bundle validate -t prod
+
+      - name: Publicar bundle (alvo prod)
+        run: databricks bundle deploy -t prod
