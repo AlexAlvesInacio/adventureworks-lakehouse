@@ -7,8 +7,8 @@
 # COMMAND ----------
 
 dbutils.widgets.text("catalogo", "workspace")
-dbutils.widgets.text("schema_silver", "adventureworks_silver")
-dbutils.widgets.text("schema_gold", "adventureworks_gold")
+dbutils.widgets.text("schema_silver", "dev_adventureworks_silver")
+dbutils.widgets.text("schema_gold", "dev_adventureworks_gold")
 
 catalogo = dbutils.widgets.get("catalogo")
 s = f"{catalogo}.{dbutils.widgets.get('schema_silver')}"

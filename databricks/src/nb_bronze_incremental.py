@@ -9,7 +9,7 @@
 
 dbutils.widgets.text("catalogo", "workspace")
 dbutils.widgets.text("catalogo_origem", "azure_adventureworks")
-dbutils.widgets.text("schema_bronze", "adventureworks_bronze")
+dbutils.widgets.text("schema_bronze", "dev_adventureworks_bronze")
 
 catalogo_destino = dbutils.widgets.get("catalogo")
 catalogo_origem = dbutils.widgets.get("catalogo_origem")
@@ -84,11 +84,7 @@ for item in controle:
             continue
 
         # Marco próprio da bronze: maior data já presente
-        marco_atual = (
-            spark.table(destino)
-            .agg(F.max(F.col(f"`{coluna_marco}`")).alias("marco"))
-            .collect()[0]["marco"]
-        )
+        marco_atual = spark.table(destino).agg(F.max(F.col(f"`{coluna_marco}`")).alias("marco")).collect()[0]["marco"]
 
         df_origem = spark.table(origem)
         if marco_atual is not None:
@@ -123,7 +119,7 @@ for item in controle:
 df_log = spark.createDataFrame(
     registros_log,
     schema="data_execucao TIMESTAMP, tabela STRING, tipo_execucao STRING, "
-           "linhas_processadas BIGINT, marco_anterior TIMESTAMP, mensagem_erro STRING",
+    "linhas_processadas BIGINT, marco_anterior TIMESTAMP, mensagem_erro STRING",
 )
 df_log.write.mode("append").saveAsTable(tabela_log)
 
